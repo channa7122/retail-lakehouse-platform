@@ -1,0 +1,23 @@
+# 1     .gitignore
+Set-Content -Path .gitignore -Value @"
+.env
+data/
+__pycache__/
+*.py[cod]
+.venv/
+.uv/
+*.checkpoint/
+_delta_log/
+spark-warehouse/
+airflow/logs/
+dbt_project/target/
+"@
+
+# 2.  .env.example       ---- >   .env
+Set-Content -Path .env.example -Value @"
+ENVIRONMENT=local
+PROJECT_NAME=retail-lakehouse-platform
+DATA_DIR=/opt/airflow/data
+"@
+Copy-Item .env.example .env
+
