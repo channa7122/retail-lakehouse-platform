@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: dim_stores
+    description: "Retail stores and distribution centers dimension"
+    columns:
+      - name: store_id
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_products
+    description: "Product catalog dimension with margin metrics"
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+      - name: retail_price
+        tests:
+          - not_null
+
+  - name: dim_customers
+    description: "Customer registry dimension"
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+      - name: email
+        tests:
+          - not_null
+
+  - name: fct_orders
+    description: "Order-level transactional sales fact table"
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_stores')
+              field: store_id
+      - name: order_status
+        tests:
+          - accepted_values:
+              values: ['Completed', 'Pending', 'Cancelled', 'Refunded']
+
+  - name: fct_daily_sales
+    description: "Daily aggregated business metrics by store and product category"
+    columns:
+      - name: sales_date
+        tests:
+          - not_null
+      - name: daily_gross_revenue
+        tests:
+          - not_null
+          
