@@ -5,7 +5,9 @@ from cleansed Silver layer data.
 """
 
 from pathlib import Path
+
 from pyspark.sql import functions as F
+
 from spark.utils.session import get_spark_session
 
 if Path("/opt/spark/data").exists():
@@ -28,9 +30,14 @@ def build_dimensions(spark) -> None:
 
     # Dim Products
     products_df = spark.read.format("delta").load(str(SILVER_PATH / "products"))
-    dim_products = (
-        products_df.withColumn("profit_margin_amount", F.round(F.col("retail_price") - F.col("unit_cost"), 2))
-        .withColumn("profit_margin_pct", F.round(((F.col("retail_price") - F.col("unit_cost")) / F.col("retail_price")) * 100, 2))
+    dim_products = products_df.withColumn(
+        "profit_margin_amount", F.round(F.col("retail_price") - F.col("unit_cost"), 2)
+    ).withColumn(
+        "profit_margin_pct",
+        F.round(
+            ((F.col("retail_price") - F.col("unit_cost")) / F.col("retail_price")) * 100,
+            2,
+        ),
     )
     dim_products.write.format("delta").mode("overwrite").save(str(GOLD_PATH / "dim_products"))
     print(f"  [OK] Saved {dim_products.count():,} rows to dim_products")
@@ -78,7 +85,10 @@ def build_facts(spark) -> None:
             F.round(F.sum("total_price"), 2).alias("daily_gross_revenue"),
             F.round(F.sum("discount_amount"), 2).alias("daily_discount_amount"),
         )
-        .withColumn("daily_net_revenue", F.round(F.col("daily_gross_revenue") - F.col("daily_discount_amount"), 2))
+        .withColumn(
+            "daily_net_revenue",
+            F.round(F.col("daily_gross_revenue") - F.col("daily_discount_amount"), 2),
+        )
     )
     fct_daily_sales.write.format("delta").mode("overwrite").save(str(GOLD_PATH / "fct_daily_sales"))
     print(f"  [OK] Saved {fct_daily_sales.count():,} rows to fct_daily_sales")

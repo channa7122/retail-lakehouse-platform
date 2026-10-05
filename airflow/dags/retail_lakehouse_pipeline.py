@@ -5,8 +5,10 @@ Raw Generation -> Bronze Ingestion -> Silver Cleaning -> Gold Marts -> Data Qual
 """
 
 from datetime import datetime, timedelta
-from airflow import DAG  # type: ignore[import-not-found]
+
 from airflow.operators.bash import BashOperator  # type: ignore[import-not-found]
+
+from airflow import DAG  # type: ignore[import-not-found]
 
 default_args = {
     "owner": "data_engineering_team",
@@ -26,7 +28,6 @@ with DAG(
     catchup=False,
     tags=["retail", "lakehouse", "spark", "delta", "dbt"],
 ) as dag:
-
     # 1. Ingestion / Data Generation Task
     task_generate_raw_data = BashOperator(
         task_id="generate_raw_data",

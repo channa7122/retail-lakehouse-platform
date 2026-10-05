@@ -4,13 +4,13 @@ Generates realistic, semi-dirty data with injected duplicates, null values,
 inconsistent date formats, and negative values to simulate real-world raw ingestion.
 """
 
-from datetime import datetime
 import json
-from pathlib import Path
 import random
-from faker import Faker
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+from faker import Faker
 
 fake = Faker()
 Faker.seed(42)
@@ -41,9 +41,7 @@ def generate_stores(num_stores: int = 50) -> pd.DataFrame:
                 "state": fake.state_abbr(),
                 "region": random.choice(regions),
                 "store_type": random.choice(store_types),
-                "opened_date": fake.date_between(
-                    start_date="-15y", end_date="-1y"
-                ).isoformat(),
+                "opened_date": fake.date_between(start_date="-15y", end_date="-1y").isoformat(),
             }
         )
     return pd.DataFrame(records)
@@ -52,7 +50,13 @@ def generate_stores(num_stores: int = 50) -> pd.DataFrame:
 def generate_products(num_products: int = 500) -> pd.DataFrame:
     """Generate product master with edge cases and missing costs."""
     categories = {
-        "Electronics": ["Laptops", "Headphones", "Tablets", "Smartphones", "Smartwatches"],
+        "Electronics": [
+            "Laptops",
+            "Headphones",
+            "Tablets",
+            "Smartphones",
+            "Smartwatches",
+        ],
         "Home & Kitchen": ["Cookware", "Small Appliances", "Furniture", "Bedding"],
         "Apparel": ["Men's Wear", "Women's Wear", "Footwear", "Accessories"],
         "Groceries": ["Beverages", "Snacks", "Pantry Essentials", "Dairy"],
@@ -100,9 +104,7 @@ def generate_customers(num_customers: int = 5000) -> pd.DataFrame:
                 "city": fake.city(),
                 "state": fake.state_abbr(),
                 "loyalty_tier": None if random.random() < 0.05 else random.choice(tiers),
-                "created_at": fake.date_between(
-                    start_date="-4y", end_date="today"
-                ).isoformat(),
+                "created_at": fake.date_between(start_date="-4y", end_date="today").isoformat(),
             }
         )
     return pd.DataFrame(records)
@@ -116,7 +118,14 @@ def generate_orders_batch(
 ) -> list[dict]:
     """Generate high-volume orders with deliberate duplicates and dirty records."""
     orders = []
-    statuses = ["Completed", "Completed", "Completed", "Pending", "Cancelled", "Refunded"]
+    statuses = [
+        "Completed",
+        "Completed",
+        "Completed",
+        "Pending",
+        "Cancelled",
+        "Refunded",
+    ]
     pay_methods = ["Credit Card", "Debit Card", "PayPal", "Cash", "Apple Pay"]
 
     customer_ids = customers_df["customer_id"].tolist()

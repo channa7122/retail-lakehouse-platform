@@ -5,6 +5,7 @@ and product category margins directly from the Gold Delta Lake layer.
 """
 
 from pathlib import Path
+
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -37,9 +38,7 @@ def load_gold_data():
 
 def main():
     st.title("🛒 Enterprise Retail Lakehouse Dashboard")
-    st.markdown(
-        "Real-time analytics powered by **Apache Spark**, **Delta Lake (Gold Layer)**, and **dbt**."
-    )
+    st.markdown("Real-time analytics powered by **Apache Spark**, **Delta Lake (Gold Layer)**, and **dbt**.")
     st.divider()
 
     try:
@@ -78,9 +77,7 @@ def main():
 
     with chart_col1:
         st.subheader("📈 Daily Sales Trend")
-        daily_trend = (
-            filtered_df.groupby("sales_date")["daily_net_revenue"].sum().reset_index()
-        )
+        daily_trend = filtered_df.groupby("sales_date")["daily_net_revenue"].sum().reset_index()
         fig_trend = px.line(
             daily_trend,
             x="sales_date",
@@ -93,9 +90,7 @@ def main():
 
     with chart_col2:
         st.subheader("🏆 Revenue by Product Category")
-        category_sales = (
-            filtered_df.groupby("category")["daily_net_revenue"].sum().reset_index()
-        )
+        category_sales = filtered_df.groupby("category")["daily_net_revenue"].sum().reset_index()
         fig_cat = px.bar(
             category_sales,
             x="category",
@@ -111,9 +106,7 @@ def main():
 
     with row2_col1:
         st.subheader("💎 Average Profit Margin % by Category")
-        margin_by_cat = (
-            products_df.groupby("category")["profit_margin_pct"].mean().reset_index()
-        )
+        margin_by_cat = products_df.groupby("category")["profit_margin_pct"].mean().reset_index()
         fig_margin = px.bar(
             margin_by_cat,
             x="category",

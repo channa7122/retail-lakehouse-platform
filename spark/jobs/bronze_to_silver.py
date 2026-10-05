@@ -5,11 +5,13 @@ filtering anomalies, flattening nested order items, and partitioning by year/mon
 """
 
 from pathlib import Path
+
 from pyspark.sql import functions as F
 from pyspark.sql.types import (
     DoubleType,
     IntegerType,
 )
+
 from spark.utils.session import get_spark_session
 
 if Path("/opt/spark/data").exists():

@@ -5,7 +5,9 @@ Reads raw CSV and JSON files from raw data directory, enriches them with audit c
 """
 
 from pathlib import Path
+
 from pyspark.sql import functions as F
+
 from spark.utils.session import get_spark_session
 
 # Automatically detect if running inside Docker container or local host
@@ -24,16 +26,9 @@ def ingest_csv_to_bronze(spark, filename: str, table_name: str) -> None:
     target_path = str(BRONZE_PATH / table_name)
 
     print(f"Ingesting {filename} -> Bronze ({table_name})...")
-    df = (
-        spark.read.format("csv")
-        .option("header", "true")
-        .option("inferSchema", "true")
-        .load(file_path)
-    )
+    df = spark.read.format("csv").option("header", "true").option("inferSchema", "true").load(file_path)
 
-    enriched_df = df.withColumn(
-        "_ingested_at", F.current_timestamp()
-    ).withColumn("_source_file", F.lit(filename))
+    enriched_df = df.withColumn("_ingested_at", F.current_timestamp()).withColumn("_source_file", F.lit(filename))
 
     enriched_df.write.format("delta").mode("append").save(target_path)
     print(f"  [OK] Successfully saved {enriched_df.count():,} rows to {target_path}")
@@ -48,9 +43,7 @@ def ingest_orders_to_bronze(spark) -> None:
     print(f"Ingesting {filename} -> Bronze (orders)...")
     df = spark.read.option("multiline", "true").json(file_path)
 
-    enriched_df = df.withColumn(
-        "_ingested_at", F.current_timestamp()
-    ).withColumn("_source_file", F.lit(filename))
+    enriched_df = df.withColumn("_ingested_at", F.current_timestamp()).withColumn("_source_file", F.lit(filename))
 
     enriched_df.write.format("delta").mode("append").save(target_path)
     print(f"  [OK] Successfully saved {enriched_df.count():,} orders to {target_path}")

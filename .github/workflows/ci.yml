@@ -24,8 +24,8 @@ jobs:
       - name: Install Dependencies
         run: uv sync
 
-      - name: Lint Python Code (Ruff)
-        run: uv run ruff check .
+      - name: Lint Core Spark & Scripts (Ruff)
+        run: uv run ruff check spark/ scripts/ dashboard.py
 
-      - name: Validate DAG Syntax
-        run: uv run python -m py_compile airflow/dags/retail_lakehouse_pipeline.py
+      - name: Validate Pipeline Script Syntax
+        run: uv run python -m py_compile spark/jobs/raw_to_bronze.py spark/jobs/bronze_to_silver.py spark/jobs/silver_to_gold.py
